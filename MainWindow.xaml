@@ -113,7 +113,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>Eingeworfen: </Label>
-                <Label FontWeight="Bold" Content="{Binding Path=EnteredMoney}" ContentStringFormat=" {0:0.00} €" />
+                <Label FontWeight="Bold" Content="{Binding Path=EnteredMoneyTotal}" ContentStringFormat=" {0:0.00} €" />
             </StackPanel>
             <Button Padding="10" Margin="20,50,20,20" FontWeight="Bold" Command="{Binding PayCommand}">Bezahlen</Button>
             <Button Padding="10" Margin="20" Command="{Binding EjectMoneyCommand}">Geld zurückgeben</Button>

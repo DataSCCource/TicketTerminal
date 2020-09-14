@@ -17,12 +17,16 @@ namespace Fahrkartenautomat
             };
         }
 
+        /// <summary>
+        /// All possible coins and bills to insert.
+        /// </summary>
+        /// <returns>List of possble coins and bills</returns>
         public static List<decimal> GetPossibleMoney()
         {
             return new List<decimal>()
             {
-                0.1m, 0.2m, 0.5m, 1, 2,
-                5, 10, 20, 50
+                0.1m, 0.2m, 0.5m, 1, 2, // coins
+                5, 10, 20, 50           // bills
             };
         }
     }
