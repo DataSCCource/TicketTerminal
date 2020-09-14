@@ -1,4 +1,6 @@
-﻿namespace Fahrkartenautomat.Model
+﻿using static Fahrkartenautomat.Definitions;
+
+namespace Fahrkartenautomat.Model
 {
     public class Ticket
     {
@@ -12,6 +14,4 @@
             return $"{Type} | {Price:c}";
         }
     }
-    public enum TicketType { Normal, Kurzstrecke, Ermaeßigt, Fahrrad, Monatskarte }
-
 }

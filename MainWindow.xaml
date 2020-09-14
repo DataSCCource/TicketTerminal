@@ -3,10 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:Fahrkartenautomat"
         xmlns:vm="clr-namespace:Fahrkartenautomat.ViewModel"
         mc:Ignorable="d"
-        Title="Fahrkartenautomat" Height="500" Width="400">
+        Title="Fahrkartenautomat" Height="550" Width="450">
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
@@ -15,14 +16,14 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="25"/>
             <RowDefinition Height="2*"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="3*"/>
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="175"/>
             <ColumnDefinition Width="25"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="10"/>
@@ -30,6 +31,12 @@
 
         <Label Grid.Row="1" Grid.Column="1" FontWeight="Bold" HorizontalAlignment="Center">Mögliche Fahrkarten</Label>
         <ListView x:Name="possibleTickets_lv" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding PossibleTickets}" SelectionMode="Single">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeftButtonUp">
+                    <i:InvokeCommandAction Command="{Binding AddToCartCommand}" 
+                                           CommandParameter="{Binding ElementName=possibleTickets_lv,Path=SelectedItem}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Fahrschein" DisplayMemberBinding="{Binding Type}"/>
@@ -40,6 +47,12 @@
 
         <Label Grid.Row="1" Grid.Column="3" FontWeight="Bold" HorizontalAlignment="Center">Warenkorb</Label>
         <ListView x:Name="shoppingCart_lv" Grid.Row="2" Grid.Column="3" ItemsSource="{Binding ShoppingCart}" SelectionMode="Single">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeftButtonUp">
+                    <i:InvokeCommandAction Command="{Binding RemoveFromCartCommand}" 
+                                           CommandParameter="{Binding ElementName=shoppingCart_lv,Path=SelectedItem}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="80" Header="Fahrschein" DisplayMemberBinding="{Binding Type}"/>
@@ -56,20 +69,8 @@
 
         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="10">
-                <Button Style="{StaticResource RoundedCopperButtonStyle}"
-                        Command="{Binding AddMoneyCommand}" CommandParameter="0,01"
-                        Width="30" Height="30"
-                        Content="1C"/>
-                <Button Style="{StaticResource RoundedCopperButtonStyle}"
-                        Command="{Binding AddMoneyCommand}" CommandParameter="0,02"
-                        Width="30" Height="30"
-                        Content="2C"/>
-                <Button Style="{StaticResource RoundedCopperButtonStyle}"
-                        Command="{Binding AddMoneyCommand}" CommandParameter="0,05"
-                        Width="30" Height="30"
-                        Content="5C"/>
                 <Button Style="{StaticResource RoundedGreenButtonStyle}"
-                        Command="{Binding AddMoneyCommand}" CommandParameter="0,10"
+                        Command="{Binding AddMoneyCommand}" CommandParameter="0,1"
                         Width="30" Height="30"
                         Content="10C"/>
                 <Button Style="{StaticResource RoundedGreenButtonStyle}"
@@ -90,16 +91,16 @@
                         Content="2€"/>
             </StackPanel>
             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="10">
-                <Button Width="80" Height="40"
+                <Button Width="80" Height="35"
                         Command="{Binding AddMoneyCommand}" CommandParameter="5"
                         Content="5€"/>
-                <Button Width="80" Height="40"
+                <Button Width="80" Height="35"
                         Command="{Binding AddMoneyCommand}" CommandParameter="10"
                         Content="10€"/>
-                <Button Width="80" Height="40"
+                <Button Width="80" Height="35"
                         Command="{Binding AddMoneyCommand}" CommandParameter="20"
                         Content="20€"/>
-                <Button Width="80" Height="40"
+                <Button Width="80" Height="35"
                         Command="{Binding AddMoneyCommand}" CommandParameter="50"
                         Content="50€"/>
             </StackPanel>
@@ -108,13 +109,14 @@
         <StackPanel Grid.Row="4"  Grid.Column="3">
             <StackPanel Orientation="Horizontal">
                 <Label>Gesamtpreis: </Label>
-                <Label Content="{Binding Path=TotalPrice}" ContentStringFormat=" {0:0.00} €" />
+                <Label FontWeight="Bold" Content="{Binding Path=TotalPrice}" ContentStringFormat=" {0:0.00} €" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>Eingeworfen: </Label>
-                <Label Content="{Binding Path=EnteredMoney}" ContentStringFormat=" {0:0.00} €" />
+                <Label FontWeight="Bold" Content="{Binding Path=EnteredMoney}" ContentStringFormat=" {0:0.00} €" />
             </StackPanel>
-            <Button Padding="10" Margin="20,100,20,20" Command="{Binding PayCommand}">Bezahlen</Button>
+            <Button Padding="10" Margin="20,80,20,20" Command="{Binding PayCommand}">Bezahlen</Button>
+            <Button Padding="10" Margin="20" Command="{Binding EjectMoneyCommand}">Geld zurückgeben</Button>
         </StackPanel>
 
     </Grid>

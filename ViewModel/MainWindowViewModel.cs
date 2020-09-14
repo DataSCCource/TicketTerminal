@@ -19,15 +19,8 @@ namespace Fahrkartenautomat.ViewModel
         public ObservableCollection<Ticket> ShoppingCart { get; }
         public List<decimal> PossibleMoney { get; }
         private List<decimal> EnteredMoneyBits { get; }
-        public decimal EnteredMoney 
-        { 
-            get { return EnteredMoneyBits.Sum(); } 
-        }
-
-        public decimal TotalPrice 
-        { 
-            get { return ShoppingCart.Select(ticket => ticket.Price*ticket.Amount).Sum(); } 
-        }
+        public decimal EnteredMoney => EnteredMoneyBits.Sum(); 
+        public decimal TotalPrice => ShoppingCart.Select(ticket => ticket.Price*ticket.Amount).Sum(); 
 
         private ICommand _addToCartCommand;
         public ICommand AddToCartCommand
@@ -67,10 +60,25 @@ namespace Fahrkartenautomat.ViewModel
                 if (_addMoneyCommand == null)
                 {
                     _addMoneyCommand = new RelayCommand(
-                        p => true,
+                        p => ShoppingCart.Any(),
                         p => this.AddInsertedMoney(p));
                 }
                 return _addMoneyCommand;
+            }
+        }
+
+        private ICommand _ejectMoneyCommand;
+        public ICommand EjectMoneyCommand
+        {
+            get
+            {
+                if (_ejectMoneyCommand == null)
+                {
+                    _ejectMoneyCommand = new RelayCommand(
+                        p => EnteredMoneyBits.Any(),
+                        p => this.EjectMoney());
+                }
+                return _ejectMoneyCommand;
             }
         }
 
@@ -104,18 +112,19 @@ namespace Fahrkartenautomat.ViewModel
             var change = EnteredMoney - TotalPrice;
             if (change >= 0)
             {
-                string message = "Folgende Fahrscheine gekauft: " + Environment.NewLine + Environment.NewLine;
-                ShoppingCart.ToList().ForEach(ticket => message += $"- {ticket.Amount}x {ticket.Type}{Environment.NewLine}");
+                StringBuilder message = new StringBuilder();
+                message.AppendLine("Folgende Fahrscheine gekauft: " + Environment.NewLine);
+                ShoppingCart.ToList().ForEach(ticket => message.AppendLine($"- {ticket.Amount}x {ticket.Type}"));
 
-                message += Environment.NewLine;
-                message += $"Wechselgeld: {change:0.00}€";
-                message += Environment.NewLine;
-                message += CalculateChange();
+                message.AppendLine();
+                message.AppendLine($"Wechselgeld: {change:0.00}€");
+                message.AppendLine();
+                message.AppendLine(CalculateChange());
 
-                MessageBox.Show(message, "Nett Geschäfte mit dir zu machen :)", MessageBoxButton.OK, MessageBoxImage.Information);
-
+                MessageBox.Show(message.ToString(), "Nett Geschäfte mit dir zu machen :)", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 EnteredMoneyBits.Clear();
+                ShoppingCart.ToList().ForEach(ticket => ticket.Amount = 0);
                 ShoppingCart.Clear();
                 RefillShoppinCart();
                 RaisePropertyChanged("TotalPrice");
@@ -127,6 +136,18 @@ namespace Fahrkartenautomat.ViewModel
             }
         }
 
+        private void EjectMoney()
+        {
+            StringBuilder message = new StringBuilder();
+            message.AppendLine($"Geld wird zurückgegeben: {EnteredMoney:0.00}€");
+            message.AppendLine();
+            EnteredMoneyBits.ForEach(m => message.AppendLine($"1x " + (m >= 1 ? $"{m} €" : $"{(m * 100):0} Cent")));
+            MessageBox.Show(message.ToString(), "Geld wird ausgegeben :)", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            EnteredMoneyBits.Clear();
+            RaisePropertyChanged("EnteredMoney");
+        }
+
         private void AddInsertedMoney(object param)
         {
             decimal money = decimal.Parse((string)param);
@@ -135,9 +156,9 @@ namespace Fahrkartenautomat.ViewModel
             RaisePropertyChanged("EnteredMoney");
         }
 
-        private void AddToCart(object p)
+        private void AddToCart(object param)
         {
-            var ticket = (Ticket)p;
+            var ticket = (Ticket)param;
             var found = IsInShoppingCart((ticket));
             if(found == null)
             {
@@ -151,14 +172,14 @@ namespace Fahrkartenautomat.ViewModel
             RefillShoppinCart();
         }
 
-        public bool ItemIsSelected(object p) 
+        public bool ItemIsSelected(object param) 
         {
-            return p != null;
+            return param != null;
         }
 
-        private void RemoveFromCart(object p)
+        private void RemoveFromCart(object param)
         {
-            var ticket = (Ticket)p;
+            var ticket = (Ticket)param;
             ticket.Amount--;
 
             if (ticket.Amount == 0)
@@ -170,7 +191,7 @@ namespace Fahrkartenautomat.ViewModel
 
         private void RefillShoppinCart()
         {
-            ObservableCollection<Ticket> tmpList = new ObservableCollection<Ticket>();
+            var tmpList = new ObservableCollection<Ticket>();
 
             foreach (var ticket in ShoppingCart)
             {
@@ -202,11 +223,9 @@ namespace Fahrkartenautomat.ViewModel
         private string CalculateChange()
         {
             StringBuilder sb = new StringBuilder();
-            PossibleMoney.Sort();
-            PossibleMoney.Reverse();
             var total = EnteredMoney - TotalPrice;
 
-            PossibleMoney.ForEach(m =>
+            PossibleMoney.OrderByDescending(x=>x).ToList().ForEach(m =>
             {
                 int amount = 0;
                 while (total >= m)
@@ -227,7 +246,6 @@ namespace Fahrkartenautomat.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
 
     public class RelayCommand : ICommand
     {
