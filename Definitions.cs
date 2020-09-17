@@ -5,15 +5,26 @@ namespace Fahrkartenautomat
 {
     public static class Definitions
     {
-        public enum TicketType { AB, BC, ABC, Kurzstrecke }
+        public enum TicketType 
+        { 
+            AB, AB_Erm,
+            BC, BC_Erm,
+            ABC, ABC_Erm,
+            Kurzstr, Kurzstr_Erm,
+        }
         public static List<Ticket> GetPossibleTickets()
         {
             return new List<Ticket>()
             {
                 new Ticket() {Type = TicketType.AB,  Price = 2.9m },
+                new Ticket() {Type = TicketType.AB_Erm,  Price = 1.8m },
                 new Ticket() {Type = TicketType.BC,  Price = 3.3m },
+                new Ticket() {Type = TicketType.BC_Erm,  Price = 2.3m },
                 new Ticket() {Type = TicketType.ABC, Price = 3.6m },
-                new Ticket() {Type = TicketType.Kurzstrecke, Price = 1.9m },
+                new Ticket() {Type = TicketType.ABC_Erm, Price = 2.6m },
+                new Ticket() {Type = TicketType.Kurzstr, Price = 1.9m },
+                new Ticket() {Type = TicketType.Kurzstr_Erm, Price = 1.4m },
+
             };
         }
 

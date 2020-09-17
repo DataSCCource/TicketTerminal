@@ -13,7 +13,7 @@ namespace Fahrkartenautomat.Model
 
         public override string ToString()
         {
-            return $"{Type} | {Price:c}";
+            return $"{Type}\n{Price:c}";
         }
     }
 }
