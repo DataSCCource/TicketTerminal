@@ -141,12 +141,11 @@ namespace Fahrkartenautomat.ViewModel
             if (change >= 0)
             {
                 StringBuilder message = new StringBuilder();
-                message.AppendLine("Folgende Fahrscheine gekauft: " + Environment.NewLine);
+                message.AppendLine("Folgende Fahrscheine gekauft: ");
                 ShoppingCart.ToList().ForEach(ticket => message.AppendLine($"- {ticket.Amount}x {ticket.Type}"));
 
                 message.AppendLine();
                 message.AppendLine($"Wechselgeld: {change:0.00}€");
-                message.AppendLine();
                 message.AppendLine(GetStringFromMoneyList(CalculateChange()));
 
                 MessageBox.Show(message.ToString(), "Nett mit dir Geschäfte zu machen :)", MessageBoxButton.OK, MessageBoxImage.Information);

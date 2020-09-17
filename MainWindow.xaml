@@ -70,7 +70,7 @@
             </i:Interaction.Triggers>
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Fahrschein" DisplayMemberBinding="{Binding TicketName}"/>
+                    <GridViewColumn Header="Fahrschein" Width="100" DisplayMemberBinding="{Binding TicketName}"/>
                     <GridViewColumn Header="Preis" DisplayMemberBinding="{Binding Path=Price, StringFormat='{}{0:0.00} €'}"/>
                     <GridViewColumn Header="Menge" DisplayMemberBinding="{Binding Path=Amount}"/>
                 </GridView>
