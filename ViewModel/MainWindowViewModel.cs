@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
@@ -18,7 +17,9 @@ namespace Fahrkartenautomat.ViewModel
 
         public List<Ticket> PossibleTickets { get; }
         public ObservableCollection<Ticket> ShoppingCart { get; }
-        public List<decimal> PossibleMoney { get; }
+        private List<decimal> PossibleMoney { get; }
+        public List<decimal> PossibleCoins { get; }
+        public List<decimal> PossibleBills { get; }
         private List<decimal> EnteredMoneyBits { get; }
         public decimal EnteredMoneyTotal => EnteredMoneyBits.Sum(); 
         public decimal TotalPrice => ShoppingCart.Select(ticket => ticket.Price*ticket.Amount).Sum(); 
@@ -71,7 +72,7 @@ namespace Fahrkartenautomat.ViewModel
                 {
                     _addMoneyCommand = new RelayCommand(
                         p => ShoppingCart.Any(),
-                        p => this.AddInsertedMoney(decimal.Parse((string)p)));
+                        p => this.AddInsertedMoney((decimal)p));
                 }
                 return _addMoneyCommand;
             }
@@ -122,6 +123,9 @@ namespace Fahrkartenautomat.ViewModel
         {
             PossibleTickets = Definitions.GetPossibleTickets();
             PossibleMoney = Definitions.GetPossibleMoney();
+            var coinCutoff = 2;
+            PossibleCoins = PossibleMoney.Where(m => m <= coinCutoff).ToList();
+            PossibleBills = PossibleMoney.Where(m => m >  coinCutoff).ToList();
 
             ShoppingCart = new ObservableCollection<Ticket>();
             EnteredMoneyBits = new List<decimal>();
@@ -145,7 +149,7 @@ namespace Fahrkartenautomat.ViewModel
                 message.AppendLine();
                 message.AppendLine(GetStringFromMoneyList(CalculateChange()));
 
-                MessageBox.Show(message.ToString(), "Nett Geschäfte mit dir zu machen :)", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(message.ToString(), "Nett mit dir Geschäfte zu machen :)", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 EnteredMoneyBits.Clear();
                 ShoppingCart.ToList().ForEach(ticket => ticket.Amount = 0);
