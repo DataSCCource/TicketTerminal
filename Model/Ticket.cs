@@ -9,11 +9,12 @@ namespace Fahrkartenautomat.Model
     {
         public decimal Price { get; set; }
         public TicketType Type { get; set; }
+        public string TicketName { get; set; }
         public int Amount { get; set; }
 
         public override string ToString()
         {
-            return $"{Type}\n{Price:c}";
+            return $"{TicketName}\n{Price:c}";
         }
     }
 }

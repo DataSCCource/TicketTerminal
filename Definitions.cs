@@ -16,14 +16,14 @@ namespace Fahrkartenautomat
         {
             return new List<Ticket>()
             {
-                new Ticket() {Type = TicketType.AB,  Price = 2.9m },
-                new Ticket() {Type = TicketType.AB_Erm,  Price = 1.8m },
-                new Ticket() {Type = TicketType.BC,  Price = 3.3m },
-                new Ticket() {Type = TicketType.BC_Erm,  Price = 2.3m },
-                new Ticket() {Type = TicketType.ABC, Price = 3.6m },
-                new Ticket() {Type = TicketType.ABC_Erm, Price = 2.6m },
-                new Ticket() {Type = TicketType.Kurzstr, Price = 1.9m },
-                new Ticket() {Type = TicketType.Kurzstr_Erm, Price = 1.4m },
+                new Ticket() {TicketName = "AB", Type = TicketType.AB,  Price = 2.9m },
+                new Ticket() {TicketName = "AB (Ermäßigt)", Type = TicketType.AB_Erm,  Price = 1.8m },
+                new Ticket() {TicketName = "BC", Type = TicketType.BC,  Price = 3.3m },
+                new Ticket() {TicketName = "BC (Ermäßigt)", Type = TicketType.BC_Erm,  Price = 2.3m },
+                new Ticket() {TicketName = "ABC", Type = TicketType.ABC, Price = 3.6m },
+                new Ticket() {TicketName = "ABC (Ermäßigt)", Type = TicketType.ABC_Erm, Price = 2.6m },
+                new Ticket() {TicketName = "Kurzstrecke", Type = TicketType.Kurzstr, Price = 1.9m },
+                new Ticket() {TicketName = "Kurz (Ermäßigt)", Type = TicketType.Kurzstr_Erm, Price = 1.4m },
 
             };
         }
