@@ -1,7 +1,7 @@
 # WPF-Fahrkartenautomat
 Simpler "Fahrkartenautomat" mit WPF nach MVVM Muster.
 
-View: MainWindow
+View: MainWindow.xaml  
 ViewModel: ViewModel.MainWindowViewModel
 
 Hinzufügen von Fahrkarten oder Zahlungsmitteln über die Definitions.cs
