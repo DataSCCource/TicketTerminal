@@ -1,5 +1,4 @@
 ﻿using Fahrkartenautomat.Model;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -41,7 +40,7 @@ namespace Fahrkartenautomat.ViewModel
                 return _addToCartCommand;
             }
         }
-        
+
         /// <summary>
         /// Removes selected ticket from shopping cart
         /// </summary>
@@ -57,6 +56,24 @@ namespace Fahrkartenautomat.ViewModel
                         p => this.RemoveFromCart((Ticket)p));
                 }
                 return _removeFromCartCommand;
+            }
+        }
+
+        /// <summary>
+        /// Removes selected ticket from shopping cart
+        /// </summary>
+        private ICommand _removeAllFromCartCommand;
+        public ICommand RemoveAllFromCartCommand
+        {
+            get
+            {
+                if (_removeAllFromCartCommand == null)
+                {
+                    _removeAllFromCartCommand = new RelayCommand(
+                        p => ShoppingCart.Any(),
+                        p => this.RemoveAllFromCart());
+                }
+                return _removeAllFromCartCommand;
             }
         }
 
@@ -142,9 +159,9 @@ namespace Fahrkartenautomat.ViewModel
             {
                 StringBuilder message = new StringBuilder();
                 message.AppendLine("Folgende Fahrscheine gekauft: ");
-                ShoppingCart.ToList().ForEach(ticket => message.AppendLine($"- {ticket.Amount}x {ticket.Type}"));
-
+                ShoppingCart.ToList().ForEach(ticket => message.AppendLine($"- {ticket.Amount}x {ticket.TicketName}"));
                 message.AppendLine();
+
                 message.AppendLine($"Wechselgeld: {change:0.00}€");
                 message.AppendLine(GetStringFromMoneyList(CalculateChange()));
 
@@ -206,16 +223,23 @@ namespace Fahrkartenautomat.ViewModel
             return param != null;
         }
 
-        private void RemoveFromCart(Ticket param)
+        private void RemoveFromCart(Ticket ticket)
         {
-            var ticket = param;
             ticket.Amount--;
 
             if (ticket.Amount == 0)
             {
                 ShoppingCart.Remove(ticket);
-            }
+            } 
             RefillShoppingCart();
+        }
+
+        private void RemoveAllFromCart()
+        {
+            ShoppingCart.ToList().ForEach(t => t.Amount = 0 );
+            ShoppingCart.Clear();
+
+            RaisePropertyChanged(nameof(TotalPrice));
         }
 
         /// <summary>
@@ -238,7 +262,6 @@ namespace Fahrkartenautomat.ViewModel
             }
             tmpList.Clear();
             
-            RaisePropertyChanged(nameof(ShoppingCart));
             RaisePropertyChanged(nameof(TotalPrice));
         }
 
@@ -297,38 +320,6 @@ namespace Fahrkartenautomat.ViewModel
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    /// <summary>
-    /// Class that represents a command for executing a function.
-    /// Includes ability to disable the button in some conditions ("canExecute").
-    /// </summary>
-    public class RelayCommand : ICommand
-    {
-        private readonly Predicate<object> _canExecute;
-        private readonly Action<object> _execute;
-
-        public RelayCommand(Predicate<object> canExecute, Action<object> execute)
-        {
-            _canExecute = canExecute;
-            _execute = execute;
-        }
-
-        public event EventHandler CanExecuteChanged
-        {
-            add => CommandManager.RequerySuggested += value;
-            remove => CommandManager.RequerySuggested -= value;
-        }
-
-        public bool CanExecute(object parameter)
-        {
-            return _canExecute(parameter);
-        }
-
-        public void Execute(object parameter)
-        {
-            _execute(parameter);
         }
     }
 }
